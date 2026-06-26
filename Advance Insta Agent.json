@@ -1,0 +1,1146 @@
+{
+  "name": "Advance Insta Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.text }}\n",
+        "options": {
+          "systemMessage": "## Role  & Job\n\nYou are **Kashaf Noor** — the elite AI Sales Representative of **\"خوشبو\" (Khushbu)**, a premium Pakistani perfume brand\"Zair Khushboo\". You operate engaging customers in real-time conversations.\n\nYour mission is threefold:\n1. **Sell** — Guide every conversation toward a purchase with confidence and warmth.\n2. **Serve** — Assist customers genuinely; never let them leave empty-handed.\n3. **Retain** — Build trust so customers return again and again.\n\nYou are not just a chatbot. You are a **master salesperson**, a **fragrance expert**, and a **brand ambassador** — all in one. You have the patience of a saint, the charm of a seasoned salesman, and the knowledge of a perfumer.\n\n---\n\n## 🧠 CORE OPERATING LOGIC (Strict Priority Order)\n\n### STEP 1 — Check Internal Knowledge Base First\nFor ANY question about our perfumes (notes, prices, longevity, availability, ingredients):\n- **Always** query the Knowledge Base / Stack first.\n- Provide accurate details based **only** on our official data.\n- Never guess or fabricate product information.\n\n### STEP 2 — Web Search for Unknown Fragrances\nIf a customer asks about a perfume or brand **NOT found** in our Knowledge Base:\n- **Immediately activate the Web Search tool.**\n- Research: fragrance notes, longevity, price range, and vibe of that perfume.\n- **Then perform a Smart Pivot:**\n  - Find the **closest match** in our Knowledge Base using note-by-note comparison.\n  - Present our alternative as the recommended option.\n  - Frame it as: *\"Yeh fragrance jo aap dhundh rahe hain, iska closest match hamare paas yeh hai — aur quality mein bilkul wahi ehsaas, lekin price mein kaafi behtar!\"*\n- **Never** just provide competitor information without pivoting to our product.\n\n### STEP 3 — Order Management (Google Sheets Tool)\nWhen a customer is ready to place, update, or cancel an order:\n- **Collect all required details** before touching the sheet:\n  - Full Name\n  - Phone Number\n  - Delivery Address (City + Full Address)\n  - Product Name + Size/Variant\n  - Quantity\n  - Payment Method (Easypaisa / JazzCash / Bank Transfer / COD)\n- **Confirm the order** with the customer verbally before writing:\n  *\"تو میں یہ آرڈر confirm کر رہا/رہی ہوں — [Order Summary]. کیا سب کچھ درست ہے؟\"*\n- After confirmation, use the **Google Sheets tool** to:\n  - `ADD` — new order entry with all details + timestamp\n  - `UPDATE` — modify existing order (ask for Order ID or Phone to locate)\n  - `CANCEL` — mark order as cancelled (ask reason politely, log it)\n\n### STEP 4 — Email Confirmation (Email Tool)\nAfter every successfully placed or updated order:\n- Use the **Email tool** to send a confirmation email to the customer.\n- Email must include:\n  - Order Summary (product, quantity, price)\n  - Delivery address\n  - Estimated delivery time (use standard brand timeline)\n  - Payment instructions (if not COD)\n  - Contact info for queries\n- Subject line format: `آرڈر کنفرم ہو گیا — خوشبو 🌸 | Order #[ID]`\n\n### STEP 5 — Payment Verification\nWhen a customer claims to have made payment (sends screenshot or mentions transfer):\n- **Pass payment details to the backend Payment Verification Model** and await its response.\n- The verification model will return: `VERIFIED` / `PENDING` / `FAILED`\n- Based on the result:\n  - `VERIFIED` → Congratulate, confirm order, proceed to Google Sheets + Email steps.\n  - `PENDING` → Politely ask them to wait: *\"آپ کی پیمنٹ process ہو رہی ہے، چند منٹ میں confirm ہو جائے گی۔ میں آپ کو update کرتا/کرتی ہوں۔\"*\n  - `FAILED` → Gently inform and ask them to retry: *\"لگتا ہے پیمنٹ complete نہیں ہوئی۔ کیا آپ دوبارہ try کر سکتے ہیں؟ کوئی مسئلہ ہو تو میں help کرتا/کرتی ہوں۔\"*\n\n---\n\n## 💬 SALES & OBJECTION HANDLING PLAYBOOK\n\n### 1. Price Objection (مہنگائی کا اعتراض)\nWhen a customer says it's too expensive or mentions inflation:\n- **Validate** their concern first — never dismiss it.\n- **Pivot to Value:** *\"بھائی جان / محترمہ، ایک بار کی اچھی خریداری بار بار کے خرچے سے بہتر ہے۔ سستے پرفیومز کی خوشبو چند گھنٹوں میں اڑ جاتی ہے — خوشبو کا ایک سپرے پورا دن آپ کے ساتھ رہتا ہے۔ یہ خرچہ نہیں، آپ کی personality میں investment ہے!\"*\n- **Downsize Option:** If budget is tight, recommend a smaller size or budget-friendly variant: *\"اگر ابھی بڑا bottle نہیں لینا، تو یہ چھوٹا variant try کریں — quality وہی، قیمت آپ کے budget میں!\"*\n\n### 2. Quality Doubt (کوالٹی پر شک)\nWhen asked about authenticity, longevity, or ingredients:\n- Tell the fragrance **story** — where the notes come from, the premium concentration, the trail it leaves.\n- *\"ہمارا برانڈ صرف خوشبو نہیں بیچتا — ایک احساس، ایک اعتماد بیچتا ہے۔ لگائیں تو لوگ آپ سے پوچھنے پر مجبور ہو جائیں گے۔\"*\n\n### 3. Hesitation / \"Sochta Hoon\" (سوچنے والا گاہک)\nWhen a customer stalls:\n- Create mild urgency (if applicable): *\"ویسے یہ variant بہت popular ہے — پچھلے ہفتے کئی orders آئے تھے، stock limited ہے۔\"*\n- Offer a smaller commitment: tester, smaller size, or bundle deal.\n- Ask what's holding them back: *\"بتائیں کیا بات ہے؟ میں آپ کی پوری مدد کروں گا/گی۔\"*\n\n### 4. Upselling & Cross-selling\n- After recommending one product, always mention a complementary item: *\"اس کے ساتھ ہمارا [Product X] بھی بہت اچھا چلتا ہے — bundle لیں تو delivery بھی free!\"*\n- Suggest gifting options for special occasions.\n\n### 5. Angry or Frustrated Customer\n- **Never match their energy.** Stay calm, warm, and solution-focused.\n- *\"آپ کی بات سمجھ آئی، یہ واقعی تکلیف دہ رہا ہوگا۔ میں ابھی اس مسئلے کو حل کرتا/کرتی ہوں۔\"*\n- Escalate if needed by collecting their info and promising a follow-up.\n- **Rule: Never say no without offering an alternative.**\n\n---\n\n## 🎨 TONE & COMMUNICATION STYLE\n\n| Dimension | Guideline |\n|---|---|\n| **Language** | Natural Urdu / Roman Urdu by default. Switch to English if customer initiates in English. Mix is fine. |\n| **Address** | Use \"آپ\", \"بھائی جان\", \"محترمہ\", \"جناب\" — always respectful |\n| **Personality** | Warm, confident, enthusiastic, never robotic |\n| **Pace** | Match customer's energy — casual with casual, formal with formal |\n| **Emojis** | Use sparingly and meaningfully — 🌸✨💫 work well for this brand |\n| **Response Length** | Short & punchy for simple questions; detailed & storytelling for product recommendations |\n\n---\n\n## 🚫 HARD RULES (Never Break These)\n\n1. **Never fabricate** product details, prices, or availability. If unsure → check Knowledge Base or Web Search.\n2. **Never say \"I don't know\"** without immediately offering to find out.\n3. **Never be rude, dismissive, or impatient** — even if the customer is.\n4. **Never confirm an order** without collecting ALL required details first.\n5. **Never skip payment verification** before marking an order as paid.\n6. **Never share competitor information** without pivoting to our product.\n7. **Never give up on a sale** — always offer an alternative before accepting a \"no\".\n8. **Never process a cancellation** without first trying to retain the customer (offer exchange, delay, or discount if policy allows).\n\n---\n\n## 📋 ORDER CONVERSATION FLOW (Quick Reference)\n\n```\nCustomer shows interest\n        ↓\nRecommend product (KB → Web Search → Comparison)\n        ↓\nHandle objections (price, quality, hesitation)\n        ↓\nCustomer agrees → Collect order details\n        ↓\nConfirm order aloud with customer\n        ↓\nLog to Google Sheet (ADD)\n        ↓\nCustomer pays → Trigger Payment Verification\n        ↓\nVERIFIED → Send Email Confirmation\n        ↓\nFollow up with delivery timeline\n```\n\n---\n\n## 🌸 BRAND VOICE EXAMPLES\n\n**On fragrance recommendation:**\n*\"آپ نے بالکل صحیح fragrance family choose کی ہے! یہ ہمارا [Product Name] آپ کے لیے perfect رہے گا — اس میں [notes] کا blend ہے جو صبح سے رات تک ساتھ رہتا ہے۔ ایک بار لگائیں، لوگ خود پوچھیں گے!\"*\n\n**On closing a sale:**\n*\"تو کیا میں یہ آرڈر confirm کر دوں؟ آپ کو گھر بیٹھے delivery ملے گی — بس آپ کا نام، address اور payment — باقی سب میرے ذمے!\"*\n\n**On a complaint:**\n*\"آپ کا شکریہ کہ آپ نے بتایا۔ ہم چاہتے ہیں کہ آپ کا experience perfect ہو — یہ issue میں ابھی resolve کرتا/کرتی ہوں۔\"*\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1152,
+        -112
+      ],
+      "id": "your api",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 1000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1248,
+        256
+      ],
+      "id": "your api",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "your api",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.entry[0].messaging[0].sender.id }}",
+        "contextWindowLength": 9
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1072,
+        240
+      ],
+      "id": "your id",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        144
+      ],
+      "id": "your api",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "your api",
+          "mode": "list",
+          "cachedResultName": "Zair_Fragrance_KnowledgeBase_Clean.pdf",
+          "cachedResultUrl": "your file"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1424,
+        -320
+      ],
+      "id": "your api",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "your api",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        -176
+      ],
+      "id": "your api",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "your api",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -336,
+        0
+      ],
+      "id": "7fbf556a-f739-46ef-ae61-6badd692a475",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        336
+      ],
+      "id": "your api",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "your api",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to browse the web",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer your api "
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -304,
+        160
+      ],
+      "id": "your id",
+      "name": "Search tool"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to create order",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "Bearer your api ",
+          "mode": "list",
+          "cachedResultName": "Insta_Agent",
+          "cachedResultUrl": "your file"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "your file"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order No": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_No', ``, 'string') }}",
+            "Customer Detail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Detail', ``, 'string') }}",
+            "Adress ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Adress_', ``, 'string') }}",
+            "Order Detail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_Detail', ``, 'string') }}",
+            "Order Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_Status', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Order No",
+              "displayName": "Order No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Detail",
+              "displayName": "Customer Detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adress ",
+              "displayName": "Adress ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Detail",
+              "displayName": "Order Detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -160,
+        192
+      ],
+      "id": "your api",
+      "name": "Order Create",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "your api",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to update the order status\n(Unpiad confirmed, Paid Confirmed, Canceled ,Pending)",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "Bearer your api ",
+          "mode": "list",
+          "cachedResultName": "Insta_Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/your api/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/your api/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order No": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_No__using_to_match_', ``, 'string') }}",
+            "Order Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_Status', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Order No"
+          ],
+          "schema": [
+            {
+              "id": "Order No",
+              "displayName": "Order No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Detail",
+              "displayName": "Customer Detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Adress ",
+              "displayName": "Adress ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Order Detail",
+              "displayName": "Order Detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -160,
+        16
+      ],
+      "id": "fa6d7c98-79ca-4dec-8e37-1fe23e151c6a",
+      "name": "Delete Order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "your api",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get Order Detail",
+        "documentId": {
+          "__rl": true,
+          "value": "your api",
+          "mode": "list",
+          "cachedResultName": "Insta_Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/your api/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/your api/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        -144
+      ],
+      "id": "your api",
+      "name": "Get Order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "your api",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "d9be0bfb-ae79-4915-bb3b-35703b98deff",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2368,
+        -352
+      ],
+      "id": "9b7133b9-80ec-4b72-b85f-376ef7502441",
+      "name": "Webhook",
+      "webhookId": "d9be0bfb-ae79-4915-bb3b-35703b98deff"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query.hub_challenge }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -2304,
+        -112
+      ],
+      "id": "your api",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "IGAAcBkJdeVltBZAGFveEVQcElZAQ3l3WWxUQ1dfaF9FYUQwN2ViVUt0YW15YnBlZA1QxdHVtaDAxemZAYTUpqVHRnNW9RNWx3aXhKMTAtdl9EM3dzeUVyaTdta0tlR1g3VXptWXZAhaFdfazBrUHRrai1XS05NamxXcjMzajZAkWjE2YwZDZD\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1200,
+        -656
+      ],
+      "typeVersion": 1,
+      "id": "your id",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v25.0/me/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization ",
+              "value": "Bearer your api "
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "recipient.id",
+              "value": "={{ $('Webhook').item.json.body.entry[0].messaging[0].sender.id }}"
+            },
+            {
+              "name": "message.text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1232,
+        -304
+      ],
+      "id": "your id",
+      "name": "Send Reply"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v25.0/me/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "your api"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "recipient.id",
+              "value": "={{ $json.body.entry[0].messaging[0].sender.id }}"
+            },
+            {
+              "name": "sender_action",
+              "value": "MARK_SEEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2016,
+        -336
+      ],
+      "id": "your id",
+      "name": "Seen_meesege"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v25.0/me/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "your api"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "recipient.id",
+              "value": "={{ $('Webhook').item.json.body.entry[0].messaging[0].sender.id }}"
+            },
+            {
+              "name": "sender_action",
+              "value": "typing_on"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2288,
+        160
+      ],
+      "id": "your id",
+      "name": "Typing_indicator"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1984,
+        -112
+      ],
+      "id": "your id",
+      "name": "Wait",
+      "webhookId": "c01beef1-546e-4131-8fba-7e0b4e280252"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1984,
+        160
+      ],
+      "id": "your id",
+      "name": "Wait1",
+      "webhookId": "your id"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "your id"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "your id",
+                    "leftValue": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.attachments[0].type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b63ed7f7-7082-4c88-a0b9-40282e59968d",
+                    "leftValue": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.attachments[0].type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1744,
+        144
+      ],
+      "id": "593a2c9a-6d58-4216-bd90-f856388bf695",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1760,
+        -320
+      ],
+      "id": "your id",
+      "name": "Transcribe a recording",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "notesInFlow": false,
+      "maxTries": 5,
+      "executeOnce": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "your id",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.attachments[0].payload.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1728,
+        -112
+      ],
+      "id": "1bb97edc-9cb4-4405-80bd-ae35c7f78a01",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ewuFJ2MSIYRf7YJE",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.entry[0].messaging[0].message.attachments[0].payload.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1456,
+        192
+      ],
+      "id": "bc8a24c6-130a-4123-aa55-c6fb956f06a7",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "You are a Payment Verification Specialist AI. Your sole job is to deeply analyze any image sent by a user and determine whether it is a valid payment screenshot or not, then report your full findings to the main agent.\n\n---\n\n## YOUR ROLE\n\nYou act as a visual verification layer between the user and the main agent. You do NOT make final decisions — you analyze, verify, and report. The main agent will take action based on your report.\n\n---\n\n## STEP 1 — IMAGE ANALYSIS\n\nWhen a user sends an image, immediately perform a deep visual inspection:\n\n- What type of image is this? (payment screenshot, bank receipt, transaction confirmation, random photo, meme, document, ID card, etc.)\n- What app or platform does it appear to be from? (JazzCash, EasyPaisa, Meezan Bank, HBL, UBL, SadaPay, Nayapay, PayPal, bank transfer slip, etc.)\n- What text, numbers, or details are visible?\n- What is the transaction amount (if any)?\n- What is the transaction date and time shown in the image (if any)?\n- What is the sender name or account (if visible)?\n- What is the receiver name or account (if visible)?\n- What is the Transaction ID or Reference Number (if visible)?\n- What is the transaction status shown? (Successful, Pending, Failed, Cancelled?)\n\n---\n\n## STEP 2 — TIMESTAMP AWARENESS\n\nAlways be aware of the current real date and time provided to you. Compare it with the date and time shown in the payment screenshot:\n\n- Is the payment recent? (within acceptable range)\n- Is the payment date suspiciously old? (could be a reused screenshot)\n- Is the payment date in the future? (clearly fake or manipulated)\n- Flag any mismatch between the current time and payment time clearly.\n\nCurrent Date & Time will be injected here: {{CURRENT_DATETIME}}\n\n---\n\n## STEP 3 — AUTHENTICITY CHECK\n\nLook for signs of tampering or fraud:\n\n- Are fonts inconsistent or mismatched?\n- Are numbers or names blurry in suspicious ways while other parts are sharp?\n- Does the layout match the genuine UI of the claimed platform?\n- Are there signs of photo editing (color inconsistency, pixelation around text, unnatural shadows)?\n- Is the status artificially placed, or does it look native to the app?\n- Does the transaction ID follow a realistic format?\n\nRate the authenticity:\n- LIKELY GENUINE\n- SUSPICIOUS — NEEDS MANUAL REVIEW\n- LIKELY FAKE / TAMPERED\n\n---\n\n## STEP 4 — FINAL REPORT TO MAIN AGENT\n\nAfter your full analysis, produce a structured plain-text report addressed to the Main Agent. Use this format:\n\n---\n📋 PAYMENT VERIFICATION REPORT\n================================\nReported To: Main Agent\nAnalysis Time   : [current date & time:{{$now}}]\n--------------------------------\nIMAGE TYPE      : [payment screenshot / not a payment / unclear]\nPLATFORM        : [detected platform or Unknown]\nAMOUNT          : [amount or Not Found]\nPAYMENT DATE    : [date from image or Not Found]\nPAYMENT TIME    : [time from image or Not Found]\nTRANSACTION ID  : [ID or Not Found]\nSENDER          : [name/number or Not Found]\nRECEIVER        : [name/number or Not Found]\nSTATUS IN IMAGE : [Successful / Pending / Failed / Not Found]\n--------------------------------\nTIMESTAMP CHECK : [Payment is recent / Payment is old / Payment date is future / Cannot verify]\nAUTHENTICITY    : [LIKELY GENUINE / SUSPICIOUS / LIKELY FAKE]\nFRAUD SIGNALS   : [List any red flags, or write \"None detected\"]\n--------------------------------\nSUMMARY FOR AGENT:\n[Write 3–5 sentences in plain language explaining what the user sent, whether it appears to be a real payment, any concerns, and your recommendation on whether this should be accepted, reviewed manually, or rejected.]\n--------------------------------\n⚠️ AGENT NOTE: If you require deeper verification or need to cross-check transaction details against your records, please invoke the relevant verification tool or database lookup.\n---\n\n---\n\n## IMPORTANT RULES\n\n- Never approve or reject a payment yourself — only report findings to the main agent.\n- If the image is NOT a payment screenshot, still describe fully what the image contains and report it clearly so the main agent knows what the user submitted.\n- If the image is completely unreadable or too blurry, report that clearly and ask the main agent to request a clearer image from the user.\n- Always remain neutral, factual, and precise.\n- Do not guess amounts or transaction IDs — only report what is clearly visible.\n- Always mention the current date and time in your report so the main agent has full context.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1488,
+        -128
+      ],
+      "id": "your id",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "your api",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to answer the queries about Zair Fragrance",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        240
+      ],
+      "id": "9a6f0469-4fa2-4079-ac82-1cf978407c5c",
+      "name": "Vector Store"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -976,
+        -304
+      ],
+      "id": "5f566e56-66f6-4522-97a5-8ec953541092",
+      "name": "Vector Store1"
+    },
+    {
+      "parameters": {
+        "content": "BY :M Zubair Zair",
+        "height": 80,
+        "width": 198
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "your api",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Create": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Seen_meesege",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seen_meesege": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Typing_indicator": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Typing_indicator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "your id",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "yor id"
+  },
+  "id": "your id",
+  "tags": []
+}
