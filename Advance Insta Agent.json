@@ -753,7 +753,7 @@
       "name": "HTTP Request",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "ewuFJ2MSIYRf7YJE",
+          "id": "",
           "name": "Header Auth account"
         }
       }
