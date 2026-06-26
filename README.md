@@ -30,7 +30,7 @@ This workflow functions as an intelligent sales and support assistant. It integr
 
 #### Workflow Architecture
 
-![Workflow Diagram](Advance insta.png)
+![Workflow Diagram](Advance_insta.png)
 
 #### Business Impact
 
