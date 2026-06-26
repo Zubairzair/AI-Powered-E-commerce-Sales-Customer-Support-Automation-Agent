@@ -44,3 +44,5 @@ This workflow functions as an intelligent sales and support assistant. It integr
 2. Open your **n8n** dashboard and select "Import Workflow."
 3. Configure your credentials for **OpenAI API**, **Instagram/Meta API**, and your internal **CRM**.
 4. Activate the workflow to manage your Instagram sales and support channels autonomously.
+## Important Security Note:
+"For security reasons, this JSON file does not include pre-configured credentials. To run this workflow, you must connect your own OpenAI API Key, Google Service Account/OAuth, and CRM credentials within your n8n instance under the 'Credentials' settings."
